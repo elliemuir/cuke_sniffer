@@ -56,6 +56,9 @@ module CukeSniffer
     # string: Location of the hook file or root folder that was searched in
     attr_accessor :hooks_location
 
+    # string: Location of parent folder containing feature, step definition, and hook files
+    attr_accessor :project_location
+
     # Scenario array: All Scenarios found in the features from the specified folder
     attr_accessor :scenarios
 
@@ -77,6 +80,7 @@ module CukeSniffer
     # No argument(assumes current directory is the project)
     #  cuke_sniffer = CukeSniffer::CLI.new
     #
+    #
     # Against single files
     #  cuke_sniffer = CukeSniffer::CLI.new({:features_location =>"my_feature.feature"})
     # Or
@@ -87,6 +91,9 @@ module CukeSniffer
     #
     # Against folders
     #  cuke_sniffer = CukeSniffer::CLI.new({:features_location =>"my_features_directory\", :step_definitions_location =>"my_steps_directory\"})
+    #
+    # Against one root folder(assigns all three of the above location variables to one project location variable)
+    #  cuke_sniffer = CukeSniffer::CLI.new({:project_location =>"my_project_directory\"})
     #
     # Disabling cataloging for improved runtime and no dead steps identified
     #  cuke_sniffer = CukeSniffer::CLI.new({:no_catalog => true})
@@ -204,6 +211,12 @@ module CukeSniffer
     end
 
     def initialize_locations(parameters)
+      if parameters[:project_location]
+        @features_location = parameters[:project_location]
+        @step_definitions_location = parameters[:project_location]
+        @hooks_location = parameters[:project_location]
+        return
+      end
       @features_location = parameters[:features_location] ? parameters[:features_location] : Dir.getwd
       @step_definitions_location = parameters[:step_definitions_location] ? parameters[:step_definitions_location] : Dir.getwd
       @hooks_location = parameters[:hooks_location] ? parameters[:hooks_location] : Dir.getwd
